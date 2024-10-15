@@ -5,12 +5,6 @@ namespace North
 {
     public class Program
     {
-        // private static string? _api = null;
-        // public static string API 
-        // {
-        //     return _api ??= System.Text.Json
-        // }
-
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);

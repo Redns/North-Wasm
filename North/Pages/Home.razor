@@ -1,7 +1,20 @@
 ﻿@page "/"
+@inject IConfiguration configuration
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
+<h2>@txt
+</h2>
+
+@code{
+    public string txt
+    {
+        get{
+            return configuration.GetValue<string>("api");
+        }
+    }
+}
+
 
 Welcome to your new app. v1
