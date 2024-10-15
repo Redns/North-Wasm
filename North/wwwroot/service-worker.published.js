@@ -19,12 +19,12 @@ const manifestUrlList = self.assetsManifest.assets.map(asset => new URL(asset.ur
 async function onInstall(event) {
     console.info('Service worker: Install');
 
-    // Fetch and cache all matching items from the assets manifest
-    const assetsRequests = self.assetsManifest.assets
-        .filter(asset => offlineAssetsInclude.some(pattern => pattern.test(asset.url)))
-        .filter(asset => !offlineAssetsExclude.some(pattern => pattern.test(asset.url)))
-        .map(asset => new Request(asset.url, { integrity: asset.hash, cache: 'no-cache' }));
-    await caches.open(cacheName).then(cache => cache.addAll(assetsRequests));
+    // // Fetch and cache all matching items from the assets manifest
+    // const assetsRequests = self.assetsManifest.assets
+    //     .filter(asset => offlineAssetsInclude.some(pattern => pattern.test(asset.url)))
+    //     .filter(asset => !offlineAssetsExclude.some(pattern => pattern.test(asset.url)))
+    //     .map(asset => new Request(asset.url, { integrity: asset.hash, cache: 'no-cache' }));
+    // await caches.open(cacheName).then(cache => cache.addAll(assetsRequests));
 }
 
 async function onActivate(event) {
@@ -49,6 +49,15 @@ async function onFetch(event) {
         const request = shouldServeIndexHtml ? 'index.html' : event.request;
         const cache = await caches.open(cacheName);
         cachedResponse = await cache.match(request);
+
+        if (cachedResponse && cachedResponse.redirected) {
+            cachedResponse = new Response(cachedResponse.body,
+                                         {
+                                             headers: cachedResponse.headers,
+                                             status: cachedResponse.status,
+                                             statusText: cachedResponse.statusText
+                                         });
+        }
     }
 
     return cachedResponse || fetch(event.request);
